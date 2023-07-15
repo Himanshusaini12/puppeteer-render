@@ -19,7 +19,7 @@ const scrapeLogic = async (res) => {
     const searchAndScreenshot = async () => {
       const page = await browser.newPage();
 console.log('started');
-      await page.goto("https://www.free4talk.com"); // Replace with the URL of the website you want to navigate to
+      await page.goto("https://www.google.com"); // Replace with the URL of the website you want to navigate to
       await page.waitForTimeout(10000); // Wait for 10 seconds
 
       const screenshotPath = "screenshot.png"; // Replace with the desired path for the screenshot file
