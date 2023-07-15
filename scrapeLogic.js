@@ -14,32 +14,38 @@ const scrapeLogic = async (res) => {
         ? process.env.PUPPETEER_EXECUTABLE_PATH
         : puppeteer.executablePath(),
   });
+
   try {
-    const page = await browser.newPage();
+    const searchAndScreenshot = async () => {
+      const page = await browser.newPage();
+console.log('started');
+      await page.goto("https://www.free4talk.com"); // Replace with the URL of the website you want to navigate to
+      await page.waitForTimeout(10000); // Wait for 10 seconds
 
-    await page.goto("https://developer.chrome.com/");
+      const screenshotPath = "screenshot.png"; // Replace with the desired path for the screenshot file
 
-    // Set screen size
-    await page.setViewport({ width: 1080, height: 1024 });
+      try {
+        // Type the search query in the search input
+        await page.type(".ant-select-search__field", "Azeez");
+        await page.waitForTimeout(3000);
+        await page.keyboard.press("Enter");
+        console.log("Enter pressed");
 
-    // Type into search box
-    await page.type(".search-box__input", "automate beyond recorder");
+        await page.waitForTimeout(1000);
+        
+        // Take a screenshot of the page
+        await page.screenshot({ path: screenshotPath });
 
-    // Wait and click on first result
-    const searchResultSelector = ".search-box__link";
-    await page.waitForSelector(searchResultSelector);
-    await page.click(searchResultSelector);
+        console.log(`Screenshot saved: ${screenshotPath}`);
+      } catch (error) {
+        console.error("Error occurred during search and screenshot:", error);
+        // Handle the error gracefully or perform any necessary fallback logic
+      }
 
-    // Locate the full title with a unique string
-    const textSelector = await page.waitForSelector(
-      "text/Customize and automate"
-    );
-    const fullTitle = await textSelector.evaluate((el) => el.textContent);
+      await browser.close();
+    };
 
-    // Print the full title
-    const logStatement = `The title of this blog post is ${fullTitle}`;
-    console.log(logStatement);
-    res.send(logStatement);
+    await searchAndScreenshot();
   } catch (e) {
     console.error(e);
     res.send(`Something went wrong while running Puppeteer: ${e}`);
